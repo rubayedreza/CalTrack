@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 CalTrac: A Comprehensive Calorie Tracker
 
 One of my latest projects is CalTrac, a Django-based web application developed using Python. CalTrac is designed to help users monitor their dietary intake and make informed decisions about their nutrition and fitness. Key features of CalTrac include:
@@ -13,4 +12,3 @@ Feel free to explore the repository, provide feedback, and contribute to the ong
 =======
 # CalTrack
 CalTrac is an innovative calorie tracking application designed to assist users in managing their dietary intake and enhancing their fitness routines. By leveraging advanced algorithms and a user-friendly interface, CalT provides precise calorie information and detailed nutritional breakdowns for a wide range of foods.
->>>>>>> 9bbdd48526a35cfbc6303de0414b49899d6d4c02
