@@ -1,0 +1,211 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --primary-color: #5fd068;
+  --primary-dark: #4b8673;
+  --accent-color: #f5df4d;
+  --text-dark: #2d3436;
+  --text-light: #636e72;
+  --bg-light: #f6fbf4;
+  --white: #ffffff;
+  --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --radius-md: 12px;
+  --radius-lg: 20px;
+}
+
+body {
+  background-color: var(--bg-light);
+  font-family: 'Poppins', sans-serif;
+  color: var(--text-dark);
+  line-height: 1.6;
+}
+
+/* Typography */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--primary-dark);
+  font-weight: 600;
+}
+
+h1 strong {
+  color: var(--primary-color);
+}
+
+/* Layout Utilities */
+.container {
+  max-width: 1200px;
+}
+
+/* Logo */
+.logo {
+  width: 200px;
+  height: auto;
+  transition: transform 0.3s ease;
+}
+
+.logo:hover {
+  transform: scale(1.05);
+}
+
+/* Search Section */
+.search-container {
+  background: var(--white);
+  padding: 3rem 2rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  margin: 2rem auto;
+  max-width: 800px;
+}
+
+.inputstyle {
+  padding: 1.2rem 1.5rem !important;
+  border-radius: var(--radius-md) 0 0 var(--radius-md) !important;
+  border: 2px solid #e1e1e1;
+  font-size: 1.1rem;
+  transition: all 0.3s;
+}
+
+.inputstyle:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.2rem rgba(95, 208, 104, 0.25);
+}
+
+.whoop {
+  background-color: var(--primary-color);
+  border: none;
+  padding: 0 2rem;
+  font-size: 1.2rem !important;
+  font-weight: 600;
+  color: var(--white);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0 !important;
+  transition: all 0.3s ease;
+}
+
+.whoop:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(95, 208, 104, 0.4);
+}
+
+/* Result Header */
+.result-header {
+  font-size: 2.5rem;
+  margin: 2rem 0;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.shocked-emoji {
+  width: 60px;
+  margin-left: 10px;
+  animation: bounce 2s infinite;
+}
+
+/* Cards */
+.caloriescont {
+  background-color: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 3rem;
+  border: none;
+  box-shadow: var(--shadow-md);
+  transition: transform 0.3s ease;
+}
+
+.caloriescont:hover {
+  transform: translateY(-5px);
+}
+
+/* Nutrition List */
+.caloriescont ul li {
+  list-style: none;
+  padding: 12px 15px;
+  margin-bottom: 10px;
+  border-bottom: 1px dashed #e0e0e0;
+  width: 100%;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+  font-size: 1.05rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.caloriescont ul li:hover {
+  background-color: var(--bg-light);
+}
+
+.servingsize {
+  background: linear-gradient(135deg, #2d3436 0%, #000000 100%);
+  padding: 15px !important;
+  color: var(--white);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  margin-bottom: 20px !important;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Activity Icons */
+.burn-item {
+  background: var(--bg-light);
+  padding: 1.5rem;
+  border-radius: var(--radius-md);
+  margin-bottom: 1.5rem;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.burn-item:hover {
+  border-color: var(--primary-color);
+  background: var(--white);
+  box-shadow: var(--shadow-sm);
+}
+
+.burn-icon {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Alerts */
+.alert {
+  border-radius: var(--radius-md);
+  border: none;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounce {
+
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(0);
+  }
+
+  40% {
+    transform: translateY(-10px);
+  }
+
+  60% {
+    transform: translateY(-5px);
+  }
+}

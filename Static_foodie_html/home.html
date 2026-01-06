@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Google Fonts Preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous" />
+    <!-- Custom CSS -->
+    <link href="style.css" rel="stylesheet" type="text/css" />
+    <title>Foodie Calorie Finder</title>
+</head>
+
+<body>
+    <div class="container py-5">
+        <!-- Hero Search Section -->
+        <div class="row justify-content-center">
+            <div class="col-md-10 text-center">
+                <img src="images/Logo.png" class="img-fluid logo mb-4" alt="Foodie Logo" />
+
+                <div class="search-container">
+                    <form>
+                        <div class="input-group">
+                            <input type="text" name="query" class="form-control inputstyle shadow-none"
+                                placeholder="Search for calories in your food..." required>
+                            <button class="btn whoop" type="submit" id="button-addon2">Find Calories</button>
+                        </div>
+                        <ul id="suggestions-list" class="suggestions-list"></ul>
+                    </form>
+                    <div class="mt-3 text-muted small">
+                        <span>Popular: </span>
+                        <span
+                            class="badge rounded-pill bg-light text-dark border border-secondary cursor-pointer search-chip"
+                            role="button">Pizza</span>
+                        <span
+                            class="badge rounded-pill bg-light text-dark border border-secondary cursor-pointer search-chip"
+                            role="button">Rice</span>
+                        <span
+                            class="badge rounded-pill bg-light text-dark border border-secondary cursor-pointer search-chip"
+                            role="button">Apple</span>
+                        <span
+                            class="badge rounded-pill bg-light text-dark border border-secondary cursor-pointer search-chip"
+                            role="button">Chicken</span>
+                    </div>
+
+                    <!-- Calculator Button (New Interaction) -->
+                    <div class="mt-4 text-center">
+                        <button type="button" class="btn btn-success rounded-pill px-4 py-2 fw-bold shadow-sm"
+                            data-bs-toggle="modal" data-bs-target="#bmiModal">
+                            <i class="bi bi-calculator me-1"></i> Calculate BMI & Daily Needs
+                        </button>
+                    </div>
+
+                    <!-- Recent History Reel -->
+                    <div id="history-section" style="display:none;" class="fade-in">
+                        <div class="mt-4 pt-3 border-top">
+                            <small class="text-muted fw-bold text-uppercase ls-1">Recently Viewed</small>
+                            <div id="history-container" class="history-container">
+                                <!-- JS Injected Items -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Errors -->
+                <div class="alert alert-warning shadow-sm" style="display:none;"> Connection error or food not found.
+                </div>
+
+                <!-- BMI Modal -->
+                <div class="modal fade" id="bmiModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+                            <div class="modal-header border-0 pb-0">
+                                <h5 class="modal-title fw-bold text-success">Health Calculator</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body p-4">
+                                <form id="bmi-form">
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-6">
+                                            <label class="form-label small text-muted">Height (cm)</label>
+                                            <input type="number" class="form-control" id="bmi-height" required
+                                                placeholder="170">
+                                        </div>
+                                        <div class="col-6">
+                                            <label class="form-label small text-muted">Weight (kg)</label>
+                                            <input type="number" class="form-control" id="bmi-weight" required
+                                                placeholder="70">
+                                        </div>
+                                        <div class="col-6">
+                                            <label class="form-label small text-muted">Age</label>
+                                            <input type="number" class="form-control" id="bmi-age" required
+                                                placeholder="25">
+                                        </div>
+                                        <div class="col-6">
+                                            <label class="form-label small text-muted">Gender</label>
+                                            <select class="form-select" id="bmi-gender">
+                                                <option value="male">Male</option>
+                                                <option value="female">Female</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <button type="submit"
+                                        class="btn btn-success w-100 rounded-pill fw-bold">Calculate</button>
+                                </form>
+                                <div id="bmi-result" class="mt-3 text-center" style="display:none;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Errors -->
+                <div class="alert alert-warning shadow-sm" style="display:none;"> Connection error or food not found.
+                </div>
+
+                <!-- Results Container -->
+                <div id="results-container" style="display:none;">
+                    <!-- Main Result Heading -->
+                    <h1 class="result-header">
+                        <!-- Content filled by JS -->
+                    </h1>
+
+                    <!-- Health Details -->
+                    <div class="caloriescont">
+                        <!-- Content filled by JS -->
+                        <div class="alert alert-danger d-flex align-items-center mt-3 justify-content-center border-0 shadow-sm"
+                            style="display:none;" id="sodium-warning">
+                            <div><i class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2"></i> High Sodium</div>
+                        </div>
+                        <div class="row g-5">
+                            <div class="col-md-6">
+                                <h2 class="mb-4 text-start border-bottom pb-2">Nutritional Values</h2>
+
+                                <!-- Macro Bars -->
+                                <div class="macro-container">
+                                    <div class="macro-label"><span>Carbs</span>
+                                        <span>${food.carbohydrates_total_g}g</span>
+                                    </div>
+                                    <div class="progress mb-3">
+                                        <div class="progress-bar bg-success" role="progressbar"
+                                            style="width: ${Math.min((food.carbohydrates_total_g / 300) * 100, 100)}%">
+                                        </div>
+                                    </div>
+
+                                    <div class="macro-label"><span>Protein</span> <span>${food.protein_g}g</span></div>
+                                    <div class="progress mb-3">
+                                        <div class="progress-bar bg-info" role="progressbar"
+                                            style="width: ${Math.min((food.protein_g / 150) * 100, 100)}%"></div>
+                                    </div>
+
+                                    <div class="macro-label"><span>Fat</span> <span>${food.fat_total_g}g</span></div>
+                                    <div class="progress mb-3">
+                                        <div class="progress-bar bg-warning" role="progressbar"
+                                            style="width: ${Math.min((food.fat_total_g / 100) * 100, 100)}%"></div>
+                                    </div>
+                                </div>
+
+                                <ul class="p-0 m-0">
+                                    <li class="servingsize d-flex justify-content-between align-items-center">Serving
+                                        Size per 100g <span><i class="bi bi-check-circle-fill"></i></span></li>
+                                    <li>Carbohydrates <span
+                                            class="fw-bold text-dark">${food.carbohydrates_total_g.toFixed(1)}g</span>
+                                    </li>
+                                    <li>Cholesterol <span class="fw-bold text-dark">${food.cholesterol_mg}mg</span></li>
+                                    <li>Saturated fat <span
+                                            class="fw-bold text-dark">${food.fat_saturated_g.toFixed(1)}g</span></li>
+                                    <li>Total Fat <span class="fw-bold text-dark">${food.fat_total_g.toFixed(1)}g</span>
+                                    </li>
+                                    <li>Fiber Content <span class="fw-bold text-dark">${food.fiber_g.toFixed(1)}g</span>
+                                    </li>
+                                    <li>Potassium <span class="fw-bold text-dark">${food.potassium_mg}mg</span></li>
+                                    <li>Protein <span class="fw-bold text-dark">${food.protein_g.toFixed(1)}g</span>
+                                    </li>
+                                    <li>Sodium <span class="fw-bold text-dark">${food.sodium_mg.toFixed(1)}mg</span>
+                                    </li>
+                                    <li>Sugar <span class="fw-bold text-dark">${food.sugar_g.toFixed(1)}g</span></li>
+                                </ul>
+
+                                <button class="add-btn" onclick="addToLog('${food.name.replace(/'/g, " \\'")}',
+                                    ${food.calories}, ${food.protein_g}, ${food.carbohydrates_total_g},
+                                    ${food.fat_total_g})">
+                                    <i class="bi bi-plus-circle-fill me-2"></i> Add to Daily Log
+                                </button>
+                            </div>
+                            <div class="col-md-6">
+                                <h2 class="mb-4 text-start border-bottom pb-2">Burn this off</h2>
+                                <div class="burn-item d-flex align-items-center">
+                                    <div class="flex-shrink-0"><img src="images/running.png" class="burn-icon"></div>
+                                    <div class="flex-grow-1 ms-3 text-start">
+                                        <h5 class="mb-1">Jog</h5>
+                                        <p class="mb-0 text-muted">...</p>
+                                    </div>
+                                </div>
+                                <div class="burn-item d-flex align-items-center">
+                                    <div class="flex-shrink-0"><img src="images/yoga.png" class="burn-icon"></div>
+                                    <div class="flex-grow-1 ms-3 text-start">
+                                        <h5 class="mb-1">Power Yoga</h5>
+                                        <p class="mb-0 text-muted">...</p>
+                                    </div>
+                                </div>
+                                <div class="burn-item d-flex align-items-center">
+                                    <div class="flex-shrink-0"><img src="images/weightlifter.png" class="burn-icon">
+                                    </div>
+                                    <div class="flex-grow-1 ms-3 text-start">
+                                        <h5 class="mb-1">Gym Workout</h5>
+                                        <p class="mb-0 text-muted">...</p>
+                                    </div>
+                                </div>
+                                <div class="burn-item d-flex align-items-center">
+                                    <div class="flex-shrink-0"><img src="images/walking.png" class="burn-icon"></div>
+                                    <div class="flex-grow-1 ms-3 text-start">
+                                        <h5 class="mb-1">Brisk Walk</h5>
+                                        <p class="mb-0 text-muted">...</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Chart Section -->
+                            <div class="col-md-12 mt-5">
+                                <div class="p-4 bg-white rounded shadow-sm">
+                                    <h3 class="mb-4 text-center">Nutritional Breakdown</h3>
+                                    <div style="position: relative; height:400px; width:100%">
+                                        <canvas id="myChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Daily Log Section -->
+                <div class="daily-log-container" id="daily-log" style="display:none;">
+                    <div class="log-header">
+                        <h3><i class="bi bi-journal-album me-2"></i> Today's Dashboard</h3>
+                        <button class="btn-clear" onclick="clearLog()"><i class="bi bi-trash3-fill me-1"></i> Clear
+                            Log</button>
+                    </div>
+
+                    <div class="row">
+                        <!-- Goal Ring (Left) -->
+                        <div class="col-md-5 mb-4 mb-md-0">
+                            <div class="bg-white p-4 rounded-4 shadow-sm h-100 text-center">
+                                <h5 class="text-muted mb-3 small fw-bold">DAILY CALORIE GOAL</h5>
+                                <div class="goal-container">
+                                    <svg viewBox="0 0 36 36" class="circular-chart green">
+                                        <path class="circle-bg"
+                                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                        <path class="circle" id="goal-circle" stroke="#5fd068" stroke-dasharray="0, 100"
+                                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                        <text x="18" y="20.35" class="percentage" id="goal-percent">0%</text>
+                                    </svg>
+                                </div>
+                                <div class="mt-2">
+                                    <span class="h4 fw-bold" id="goal-current">0</span> <span class="text-muted"> / 2000
+                                        kcal</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Water Tracker (Right) -->
+                        <div class="col-md-7">
+                            <div class="bg-white p-4 rounded-4 shadow-sm mb-4">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="text-muted small fw-bold mb-0">HYDRATION</h5>
+                                    <span class="badge bg-light text-primary"><span id="water-count">0</span>/8
+                                        Glasses</span>
+                                </div>
+                                <div class="water-grid" id="water-grid">
+                                    <!-- JS Generated -->
+                                </div>
+                            </div>
+
+                            <!-- Log List moved here -->
+                            <div id="log-list" class="bg-white p-3 rounded-4 shadow-sm"
+                                style="max-height: 300px; overflow-y: auto;">
+                                <!-- Items go here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="log-total">
+                        <div class="row g-4">
+                            <div class="col-md-3 col-6">
+                                <div class="total-box">
+                                    <div class="total-value text-success" id="total-cals">0</div>
+                                    <div class="total-label">Calories</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <div class="total-box">
+                                    <div class="total-value text-info" id="total-protein">0g</div>
+                                    <div class="total-label">Protein</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <div class="total-box">
+                                    <div class="total-value text-warning" id="total-carbs">0g</div>
+                                    <div class="total-label">Carbs</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <div class="total-box">
+                                    <div class="total-value text-danger" id="total-fat">0g</div>
+                                    <div class="total-label">Fat</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scripts -->
+                <script
+                    src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.8.0/chart.min.js"></script>
+                <!-- Bootstrap Icons -->
+                <link rel="stylesheet"
+                    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+
+                <script>
+                    let myChart = null; // Initialize globally
+                    let dailyLog = [];
+                    let waterIntake = 0;
+                    const DAILY_GOAL = 2000;
+
+                    // --- Autocomplete Logic ---
+                    const searchInput = document.querySelector('input[name="query"]');
+                    const suggestionsList = document.getElementById('suggestions-list');
+
+                    if (searchInput && suggestionsList) {
+                        searchInput.addEventListener('input', function () {
+                            const query = this.value.toLowerCase().trim();
+                            suggestionsList.innerHTML = ''; // Clear previous
+
+                            if (query.length < 1) {
+                                suggestionsList.style.display = 'none';
+                                return;
+                            }
+
+                            // Filter Local DB matches
+                            const matches = Object.keys(localFoodDB).filter(key => key.includes(query));
+
+                            if (matches.length > 0) {
+                                matches.forEach(key => {
+                                    const item = localFoodDB[key];
+                                    const li = document.createElement('li');
+                                    li.className = 'suggestion-item';
+                                    li.innerHTML = `<span>${item.name}</span> <small class="text-muted"><i class="bi bi-search"></i></small>`;
+                                    li.addEventListener('click', () => {
+                                        searchInput.value = key;
+                                        suggestionsList.style.display = 'none';
+                                        document.querySelector('.whoop').click(); // Trigger search
+                                    });
+                                    suggestionsList.appendChild(li);
+                                });
+                                suggestionsList.style.display = 'block';
+                            } else {
+                                suggestionsList.style.display = 'none';
+                            }
+                        });
+
+                        // Hide suggestions when clicking outside
+                        document.addEventListener('click', function (e) {
+                            if (!searchInput.contains(e.target) && !suggestionsList.contains(e.target)) {
+                                suggestionsList.style.display = 'none';
+                            }
+                        });
+                    }
+
+                    // --- BMI Calculator Logic ---
+                    const bmiForm = document.getElementById('bmi-form');
+                    if (bmiForm) {
+                        bmiForm.addEventListener('submit', function (e) {
+                            e.preventDefault();
+                            const height = parseFloat(document.getElementById('bmi-height').value);
+                            const weight = parseFloat(document.getElementById('bmi-weight').value);
+                            const age = parseFloat(document.getElementById('bmi-age').value);
+                            const gender = document.getElementById('bmi-gender').value;
+
+                            if (height && weight && age) {
+                                // BMI
+                                const bmi = (weight / ((height / 100) ** 2)).toFixed(1);
+                                let bmiStatus = '';
+                                let colorClass = '';
+                                if (bmi < 18.5) { bmiStatus = 'Underweight'; colorClass = 'text-info'; }
+                                else if (bmi < 25) { bmiStatus = 'Healthy Weight'; colorClass = 'text-success'; }
+                                else if (bmi < 30) { bmiStatus = 'Overweight'; colorClass = 'text-warning'; }
+                                else { bmiStatus = 'Obese'; colorClass = 'text-danger'; }
+
+                                // BMR (Mifflin-St Jeor)
+                                let bmr = (10 * weight) + (6.25 * height) - (5 * age);
+                                bmr += (gender === 'male') ? 5 : -161;
+
+                                const resultDiv = document.getElementById('bmi-result');
+                                resultDiv.style.display = 'block';
+                                resultDiv.innerHTML = `
+                                    <div class="h4 mb-1">BMI: <span class="${colorClass} fw-bold">${bmi}</span></div>
+                                    <div class="small text-muted mb-3">${bmiStatus}</div>
+                                    <div class="p-3 bg-light rounded">
+                                        Daily Maintenance: <strong class="text-dark">${Math.round(bmr * 1.2)} kcal</strong>
+                                        <div class="text-xs text-muted mt-1">(Sedentary estimate)</div>
+                                    </div>
+                                `;
+                            }
+                        });
+                    }
+
+                    // --- Water Logic ---
+                    function renderWater() {
+                        const grid = document.getElementById('water-grid');
+                        if (!grid) return;
+                        grid.innerHTML = '';
+                        for (let i = 0; i < 8; i++) {
+                            const icon = document.createElement('i');
+                            icon.className = `bi bi-droplet-fill water-glass ${i < waterIntake ? 'filled' : ''}`;
+                            icon.onclick = () => {
+                                if (i < waterIntake) waterIntake = i; // Reduce
+                                else waterIntake = i + 1; // Increase
+                                renderWater();
+                            };
+                            grid.appendChild(icon);
+                        }
+                        document.getElementById('water-count').innerText = waterIntake;
+                    }
+                    window.addEventListener('load', renderWater);
+
+
+                    // Function to safely format numbers
+                    const safeFixed = (val) => (Number(val) || 0).toFixed(1);
+
+                    function addToLog(name, cals, protein, carbs, fat) {
+                        dailyLog.push({ name, cals, protein, carbs, fat });
+                        renderLog();
+                        // Smooth scroll
+                        setTimeout(() => { document.getElementById('daily-log').scrollIntoView({ behavior: 'smooth' }); }, 100);
+                    }
+
+                    function clearLog() {
+                        if (confirm('Clear daily log?')) {
+                            dailyLog = [];
+                            renderLog();
+                        }
+                    }
+
+                    function renderLog() {
+                        const container = document.getElementById('daily-log');
+                        const list = document.getElementById('log-list');
+
+                        if (dailyLog.length === 0) {
+                            container.style.display = 'none';
+                            return;
+                        }
+
+                        container.style.display = 'block';
+                        list.innerHTML = '';
+
+                        let totalCals = 0, totalProtein = 0, totalCarbs = 0, totalFat = 0;
+
+                        dailyLog.forEach((item, index) => {
+                            totalCals += item.cals;
+                            totalProtein += item.protein;
+                            totalCarbs += item.carbs;
+                            totalFat += item.fat;
+
+                            const div = document.createElement('div');
+                            div.className = 'log-item';
+                            div.innerHTML = `
+                                <div class="d-flex align-items-center">
+                                    <div class="me-3 text-success fs-4"><i class="bi bi-check-circle-fill"></i></div>
+                                    <div>
+                                        <div class="h5 mb-0 fw-bold">${item.name}</div>
+                                        <div class="text-muted small">${Math.round(item.cals)} kcal • P: ${safeFixed(item.protein)}g • C: ${safeFixed(item.carbs)}g • F: ${safeFixed(item.fat)}g</div>
+                                    </div>
+                                </div>
+                                <button class="btn btn-sm btn-outline-danger border-0" onclick="dailyLog.splice(${index}, 1); renderLog();" title="Remove"><i class="bi bi-x-lg fs-5"></i></button>
+                            `;
+                            list.appendChild(div);
+                        });
+
+                        // Animate Numbers (Simple increment effect could be added here, for now direct update)
+                        document.getElementById('total-cals').innerText = Math.round(totalCals);
+                        document.getElementById('total-protein').innerText = Math.round(totalProtein) + 'g';
+                        document.getElementById('total-carbs').innerText = Math.round(totalCarbs) + 'g';
+                        document.getElementById('total-fat').innerText = Math.round(totalFat) + 'g';
+
+                        // Update Goal Ring
+                        const goalPercent = Math.min((totalCals / DAILY_GOAL) * 100, 100);
+                        document.getElementById('goal-circle').setAttribute('stroke-dasharray', `${goalPercent}, 100`);
+                        document.getElementById('goal-percent').textContent = `${Math.round(goalPercent)}%`;
+                        document.getElementById('goal-current').innerText = Math.round(totalCals);
+
+                        // Color change based on progress
+                        const circle = document.getElementById('goal-circle');
+                        if (goalPercent < 50) circle.style.stroke = '#5fd068'; // Green
+                        else if (goalPercent < 90) circle.style.stroke = '#f1c40f'; // Yellow
+                        else circle.style.stroke = '#e74c3c'; // Red
+                    }
+
+                    // API Keys
+                    const CALORIE_NINJAS_KEY = ''; // Get free key from https://calorieninjas.com/api
+
+                    // Local Bengali/Indian & Common Generic Food Database (Fallback)
+                    const localFoodDB = {
+                        // Regional
+                        "macher jhol": { name: "Macher Jhol (Fish Curry)", calories: 320, protein_g: 22, carbs: 12, fat_t: 18, image: "https://www.archanaskitchen.com/images/archanaskitchen/1-Author/usashis-gmail.com/Macher_Jhol_Bengali_Style_Fish_Curry.jpg" },
+                        "biryani": { name: "Chicken Biryani", calories: 290, protein_g: 10, carbs: 35, fat_t: 12, image: "https://recipes.timesofindia.com/thumb/msid-54308405,width-1600,height-900/54308405.jpg" },
+                        "dal": { name: "Dal (Lentil Soup)", calories: 120, protein_g: 8, carbs: 18, fat_t: 3, image: "https://www.connoisseurusveg.com/wp-content/uploads/2020/02/red-lentil-dal-16-500x500.jpg" },
+                        "roti": { name: "Roti (Chapati)", calories: 70, protein_g: 3, carbs: 15, fat_t: 0.4, image: "https://static.toiimg.com/thumb/61545633.cms?imgsize=306132&width=800&height=800" },
+                        "rasgulla": { name: "Rasgulla", calories: 125, protein_g: 2, carbs: 25, fat_t: 1, image: "https://static.toiimg.com/thumb/52755223.cms?imgsize=244791&width=800&height=800" },
+                        "samosa": { name: "Samosa", calories: 260, protein_g: 6, carbs: 24, fat_t: 17, image: "https://static.toiimg.com/thumb/61050397.cms?imgsize=246859&width=800&height=800" },
+                        "dosa": { name: "Masala Dosa", calories: 350, protein_g: 8, carbs: 55, fat_t: 10, image: "https://vismaifood.com/storage/app/uploads/public/8b4/19e/427/thumb__700_0_0_0_auto.jpg" },
+                        "paneer": { name: "Paneer Butter Masala", calories: 450, protein_g: 14, carbs: 18, fat_t: 35, image: "https://www.ruchiskitchen.com/wp-content/uploads/2020/12/Paneer-Butter-Masala-1.jpg" },
+
+                        // Common Generics (Overriding OpenFoodFacts noise)
+                        "cake": { name: "Chocolate Cake (Slice)", calories: 280, protein_g: 4, carbs: 35, fat_t: 14, image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" },
+                        "pizza": { name: "Pizza (Cheese Slice)", calories: 285, protein_g: 12, carbs: 36, fat_t: 10, image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" },
+                        "burger": { name: "Cheeseburger", calories: 350, protein_g: 20, carbs: 30, fat_t: 18, image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" },
+                        "fries": { name: "French Fries (Medium)", calories: 312, protein_g: 3, carbs: 41, fat_t: 15, image: "https://images.unsplash.com/photo-1573080496987-a199f8cd6268?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" },
+                        "chicken": { name: "Grilled Chicken Breast (100g)", calories: 165, protein_g: 31, carbs: 0, fat_t: 3.6, image: "https://images.unsplash.com/photo-1532550907401-a500c9a57435?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" },
+                        "apple": { name: "Apple (Medium)", calories: 52, protein_g: 0.3, carbs: 14, fat_t: 0.2, image: "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" }
+                    };
+
+                    async function fetchFromOpenFoodFacts(query) {
+                        try {
+                            const response = await fetch(`https://world.openfoodfacts.org/cgi/search.pl?search_terms=${query}&search_simple=1&action=process&json=1&page_size=1`);
+                            if (!response.ok) return null;
+                            const data = await response.json();
+                            if (!data.products || data.products.length === 0) return null;
+
+                            const product = data.products[0];
+                            const nutriments = product.nutriments || {};
+
+                            return {
+                                name: product.product_name || query,
+                                image: product.image_url || '',
+                                calories: nutriments['energy-kcal_value'] || 0,
+                                serving_size_g: 100,
+                                carbohydrates_total_g: nutriments.carbohydrates_value || 0,
+                                cholesterol_mg: 0,
+                                fat_saturated_g: nutriments['saturated-fat_value'] || 0,
+                                fat_total_g: nutriments.fat_value || 0,
+                                fiber_g: nutriments.fiber_value || 0,
+                                potassium_mg: nutriments.potassium_value || 0,
+                                protein_g: nutriments.proteins_value || 0,
+                                sodium_mg: (nutriments.sodium_value || 0) * 1000,
+                                sugar_g: nutriments.sugars_value || 0
+                            };
+                        } catch (e) {
+                            console.warn("OpenFoodFacts failed", e);
+                            return null;
+                        }
+                    }
+
+                    async function fetchFromCalorieNinjas(query) {
+                        if (!CALORIE_NINJAS_KEY) return null;
+                        try {
+                            const response = await fetch(`https://api.calorieninjas.com/v1/nutrition?query=${query}`, {
+                                headers: { 'X-Api-Key': CALORIE_NINJAS_KEY }
+                            });
+                            if (!response.ok) return null;
+                            const data = await response.json();
+                            if (!data.items || data.items.length === 0) return null;
+
+                            const item = data.items[0];
+                            return {
+                                name: item.name,
+                                image: '', // CalorieNinjas doesn't provide images
+                                calories: item.calories,
+                                serving_size_g: item.serving_size_g,
+                                carbohydrates_total_g: item.carbohydrates_total_g,
+                                cholesterol_mg: item.cholesterol_mg,
+                                fat_saturated_g: item.fat_saturated_g,
+                                fat_total_g: item.fat_total_g,
+                                fiber_g: item.fiber_g,
+                                potassium_mg: item.potassium_mg,
+                                protein_g: item.protein_g,
+                                sodium_mg: item.sodium_mg,
+                                sugar_g: item.sugar_g
+                            };
+                        } catch (e) {
+                            console.warn("CalorieNinjas failed", e);
+                            return null;
+                        }
+                    }
+
+                    // --- History Logic ---
+                    function loadHistory() {
+                        const history = JSON.parse(localStorage.getItem('foodie_history') || '[]');
+                        const container = document.getElementById('history-container');
+                        const section = document.getElementById('history-section');
+
+                        if (history.length === 0) {
+                            section.style.display = 'none';
+                            return;
+                        }
+
+                        section.style.display = 'block';
+                        container.innerHTML = '';
+
+                        history.forEach(item => {
+                            const div = document.createElement('div');
+                            div.className = 'history-item';
+                            const img = item.image ? item.image : 'https://cdn-icons-png.flaticon.com/512/706/706164.png';
+                            div.innerHTML = `<img src="${img}" class="history-img"><span class="history-name">${item.name}</span>`;
+                            div.onclick = () => {
+                                document.querySelector('input[name="query"]').value = item.name;
+                                document.querySelector('.whoop').click();
+                            };
+                            container.appendChild(div);
+                        });
+                    }
+
+                    function saveToHistory(food) {
+                        let history = JSON.parse(localStorage.getItem('foodie_history') || '[]');
+                        // Remove duplicate if exists
+                        history = history.filter(h => h.name.toLowerCase() !== food.name.toLowerCase());
+                        // Add new to front
+                        history.unshift({ name: food.name, image: food.image });
+                        // Keep max 7
+                        if (history.length > 7) history.pop();
+
+                        localStorage.setItem('foodie_history', JSON.stringify(history));
+                        loadHistory();
+                    }
+
+                    // Initial Load
+                    window.addEventListener('load', loadHistory);
+
+                    function fetchFromLocalDB(query) {
+                        const key = query.toLowerCase().trim();
+                        // Partial match
+                        const match = Object.keys(localFoodDB).find(k => key.includes(k) || k.includes(key));
+
+                        if (match) {
+                            const item = localFoodDB[match];
+                            return {
+                                name: item.name,
+                                image: item.image,
+                                calories: item.calories,
+                                serving_size_g: 100,
+                                carbohydrates_total_g: item.carbs,
+                                cholesterol_mg: 0,
+                                fat_saturated_g: item.fat_t * 0.3, // Estimate
+                                fat_total_g: item.fat_t,
+                                fiber_g: 2, // Estimate
+                                potassium_mg: 100, // Estimate
+                                protein_g: item.protein_g,
+                                sodium_mg: 300, // Estimate
+                                sugar_g: 5 // Estimate
+                            };
+                        }
+                        return null;
+                    }
+
+                    document.querySelector('form').addEventListener('submit', async function (e) {
+                        e.preventDefault();
+                        const query = document.querySelector('input[name="query"]').value;
+                        const btn = document.querySelector('.whoop');
+                        const originalBtnText = btn.innerHTML;
+                        btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Searching...';
+                        btn.disabled = true;
+
+                        try {
+                            // Strategy: 1. Local (Fastest for specific matches) -> 2. OpenFoodFacts (Barcodes/Standard) -> 3. CalorieNinjas (Text)
+
+                            // Note: Adjusted order to prioritize Local for "Bengali" queries which OFF misses
+                            let food = fetchFromLocalDB(query);
+
+                            if (!food) {
+                                food = await fetchFromOpenFoodFacts(query);
+                            }
+
+                            if (!food) {
+                                food = await fetchFromCalorieNinjas(query);
+                            }
+
+                            if (!food) {
+                                alert('No food found! Try specific names or get an API Key for CalorieNinjas for better results.');
+                                btn.innerHTML = originalBtnText;
+                                btn.disabled = false;
+                                return;
+                            }
+
+                            // ... proceed with 'food' object ... (Rest of UI update logic)
+
+                            // Generate Badges
+                            let badgesHtml = '';
+                            if (food.protein_g > 15) badgesHtml += '<span class="badge bg-success me-1">High Protein</span>';
+                            if (food.sugar_g < 5) badgesHtml += '<span class="badge bg-info me-1">Low Sugar</span>';
+                            if (food.fiber_g > 5) badgesHtml += '<span class="badge bg-warning text-dark me-1">High Fiber</span>';
+                            if (food.calories < 100) badgesHtml += '<span class="badge bg-primary me-1">Low Calorie</span>';
+
+                            // Update UI
+                            const imageHtml = food.image ?
+                                `<div class="food-image-container">
+                                    <img src="${food.image}" alt="${food.name}">
+                                 </div>`
+                                : `<div class="p-4 text-center bg-light rounded mb-4 text-muted"><i class="bi bi-image fs-1"></i><br>No Image Available</div>`;
+
+                            document.getElementById('results-container').style.display = 'block'; // Show results
+
+                            // Save to History (New Feature)
+                            saveToHistory(food);
+
+                            document.querySelector('.result-header').innerHTML = `
+                                <div class="mb-4">${imageHtml}</div>
+                                <div class="fadeInUp" style="animation-delay: 0.1s;">
+                                    ${food.name.charAt(0).toUpperCase() + food.name.slice(1)} <br>
+                                    <span class="display-3 fw-bold text-success">Total: <strong>${food.calories} Calories</strong></span>
+                                </div>
+                                <div class="mt-3 fadeInUp" style="animation-delay: 0.2s;">${badgesHtml}</div>
+                            `;
+
+                            // Warnings
+                            const sodWarning = document.getElementById('sodium-warning');
+                            if (food.sodium_mg > 1000) {
+                                sodWarning.style.display = 'flex';
+                            } else {
+                                sodWarning.style.display = 'none';
+                            }
+
+                            // Update Detailed Values & Macros
+                            document.querySelector('.caloriescont ul').parentElement.innerHTML = `
+                                <h2 class="mb-4 text-start border-bottom pb-2">Nutritional Values</h2>
+                                
+                                <!-- Macro Bars -->
+                                <div class="macro-container">
+                                    <div class="macro-label"><span>Carbs</span> <span>${food.carbohydrates_total_g.toFixed(1)}g</span></div>
+                                    <div class="progress mb-3">
+                                        <div class="progress-bar bg-success" role="progressbar" style="width: ${Math.min((food.carbohydrates_total_g / 300) * 100, 100)}%"></div>
+                                    </div>
+                                    
+                                    <div class="macro-label"><span>Protein</span> <span>${food.protein_g.toFixed(1)}g</span></div>
+                                    <div class="progress mb-3">
+                                        <div class="progress-bar bg-info" role="progressbar" style="width: ${Math.min((food.protein_g / 150) * 100, 100)}%"></div>
+                                    </div>
+                                    
+                                    <div class="macro-label"><span>Fat</span> <span>${food.fat_total_g.toFixed(1)}g</span></div>
+                                    <div class="progress mb-3">
+                                        <div class="progress-bar bg-warning" role="progressbar" style="width: ${Math.min((food.fat_total_g / 100) * 100, 100)}%"></div>
+                                    </div>
+                                </div>
+
+                                <ul class="p-0 m-0">
+                                    <li class="servingsize d-flex justify-content-between align-items-center">Serving Size per 100g <span><i class="bi bi-check-circle-fill"></i></span></li>
+                                    <li>Carbohydrates <span class="fw-bold text-dark">${safeFixed(food.carbohydrates_total_g)}g</span></li>
+                                    <li>Cholesterol <span class="fw-bold text-dark">${food.cholesterol_mg}mg</span></li>
+                                    <li>Saturated fat <span class="fw-bold text-dark">${safeFixed(food.fat_saturated_g)}g</span></li>
+                                    <li>Total Fat <span class="fw-bold text-dark">${safeFixed(food.fat_total_g)}g</span></li>
+                                    <li>Fiber Content <span class="fw-bold text-dark">${safeFixed(food.fiber_g)}g</span></li>
+                                    <li>Potassium <span class="fw-bold text-dark">${food.potassium_mg}mg</span></li>
+                                    <li>Protein <span class="fw-bold text-dark">${safeFixed(food.protein_g)}g</span></li>
+                                    <li>Sodium <span class="fw-bold text-dark">${safeFixed(food.sodium_mg)}mg</span></li>
+                                    <li>Sugar <span class="fw-bold text-dark">${safeFixed(food.sugar_g)}g</span></li>
+                                </ul>
+                                
+                                <button class="add-btn" onclick="addToLog('${food.name.replace(/'/g, "\\'")}', ${food.calories}, ${food.protein_g}, ${food.carbohydrates_total_g}, ${food.fat_total_g})">
+                                    <i class="bi bi-plus-circle-fill me-2"></i> Add to Daily Log
+                                </button>
+                            `;
+
+                            // Update Burn Values
+                            const cal = food.calories;
+                            document.querySelectorAll('.burn-item h5').forEach(el => {
+                                const type = el.innerText;
+                                let min = 0;
+                                if (type.includes('Jog')) min = (cal / 378) * 60;
+                                if (type.includes('Power Yoga')) min = (cal / 223) * 60;
+                                if (type.includes('Gym')) min = (cal / 483) * 60;
+                                if (type.includes('Brisk Walk')) min = (cal / 294) * 60;
+                                el.nextElementSibling.innerHTML = `You will have to ${type.toLowerCase()} for <strong>${Math.round(min)}</strong> Minutes`;
+                            });
+
+                            document.querySelector('.result-header').scrollIntoView({ behavior: 'smooth' });
+
+                            // Update Chart
+                            const chartCanvas = document.getElementById('myChart');
+                            if (chartCanvas) {
+                                const ctx = chartCanvas.getContext('2d');
+                                if (myChart) {
+                                    myChart.destroy();
+                                }
+
+                                myChart = new Chart(ctx, {
+                                    type: 'bar',
+                                    data: {
+                                        labels: ['Carbohydrates', 'Cholesterol', 'Saturated Fat', 'Total Fat', 'Fiber', 'Potassium', 'Protein', 'Sodium', 'Sugar'],
+                                        datasets: [{
+                                            label: `Nutritional values of ${food.name}`,
+                                            data: [
+                                                food.carbohydrates_total_g,
+                                                food.cholesterol_mg,
+                                                food.fat_saturated_g,
+                                                food.fat_total_g,
+                                                food.fiber_g,
+                                                food.potassium_mg,
+                                                food.protein_g,
+                                                food.sodium_mg,
+                                                food.sugar_g
+                                            ],
+                                            backgroundColor: [
+                                                'rgba(95, 208, 104, 0.5)',
+                                                'rgba(75, 134, 115, 0.5)',
+                                                'rgba(245, 223, 77, 0.5)',
+                                                'rgba(75, 192, 192, 0.5)',
+                                                'rgba(153, 102, 255, 0.5)',
+                                                'rgba(255, 159, 64, 0.5)'
+                                            ],
+                                            borderColor: [
+                                                'rgba(95, 208, 104, 1)',
+                                                'rgba(75, 134, 115, 1)',
+                                                'rgba(245, 223, 77, 1)',
+                                                'rgba(75, 192, 192, 1)',
+                                                'rgba(153, 102, 255, 1)',
+                                                'rgba(255, 159, 64, 1)'
+                                            ],
+                                            borderWidth: 1
+                                        }]
+                                    },
+                                    options: {
+                                        responsive: true,
+                                        maintainAspectRatio: false,
+                                        scales: {
+                                            y: { beginAtZero: true }
+                                        }
+                                    }
+                                });
+                            }
+
+                        } catch (error) {
+                            console.error(error);
+                            alert('An unexpected error occurred.');
+                        } finally {
+                            btn.innerHTML = originalBtnText; // Restore button text
+                            btn.disabled = false;
+                        }
+                    });
+
+                    // Chips Logic
+                    document.querySelectorAll('.search-chip').forEach(chip => {
+                        chip.addEventListener('click', () => {
+                            document.querySelector('input[name="query"]').value = chip.innerText;
+                            document.querySelector('.whoop').click();
+                        });
+                    });
+                </script>
+</body>
+
+</html>
